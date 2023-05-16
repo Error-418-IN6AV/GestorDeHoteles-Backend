@@ -12,6 +12,10 @@ app.use(cors());
 app.use(helmet());
 app.use(morgan('dev'));
 
+const userRoutes = require('../src/user/user.routes');
+
+app.use('/user',userRoutes)
+
 exports.initServer = ()=>{
     app.listen(port);
     console.log(`Server http running in port ${port}`);
