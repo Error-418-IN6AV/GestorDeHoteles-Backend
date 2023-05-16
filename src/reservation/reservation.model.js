@@ -12,20 +12,27 @@ const reservationSchema = mongoose.Schema({
         ref: 'Room',
         required: true
     },
-    services: [{
-        service: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Service',
-            required: true
-        }
-    }],
+    service: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Service',
+        required: true
+    }/* ,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
-    }
+    } */
 }, {
     versionKey: false
 });
+
+reservationSchema.set('toJSON', {
+    transform: function(doc, ret, options) {
+      ret.date = ret.date.toISOString().slice(0,10); // Transform date to YYYY-MM-DD format
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+    }
+  });
 
 module.exports = mongoose.model('Reservation', reservationSchema);

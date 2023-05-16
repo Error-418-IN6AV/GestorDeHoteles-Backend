@@ -9,6 +9,5 @@ api.post('/add', /* ensureAuth, */ reservationController.add);
 api.put('/update/:id', /* ensureAuth, */ reservationController.update);
 api.delete('/delete/:id', /* ensureAuth, */ reservationController.delete);
 api.get('/get', /* ensureAuth,  */reservationController.getReservations);
-api.get('/getByHotel', /* ensureAuth, */ reservationController.getReservationsByHotel);
-
+api.get('/getId/:id', reservationController.getReservationById)
 module.exports = api;

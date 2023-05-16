@@ -9,7 +9,7 @@ exports.add = async(req, res)=>{
         //Capturar la data
         let data = req.body;
         //Capturar el id de la person logeada
-        data.user = req.user.sub
+        //data.user = req.user.sub
         //Verificar que existe la habitacion
         let roomExist = await Room.findOne({_id: data.room})
         if(!roomExist) return res.send({message: 'La habitacion no existe'})
@@ -19,17 +19,17 @@ exports.add = async(req, res)=>{
             $and: [
                 //{ room: data.room },
                 { date: data.date },
-                { user: req.user.sub }
+                //{ user: req.user.sub }
             ]
         });
         if (reservationExist) return res.status(400).send({ message: 'You already have a reservation on this date.' });
         //cambiar el estado de la habitacion
-        roomExist.available = 'NOAVAILABLE'
+        roomExist.available = 'NO DISPONIBLE'
         await roomExist.save();
         //Crear la reservacion
         let reservation = new Reservation(data);
         await reservation.save();
-        return res.send({message: 'Reservation created sucessfully'});
+        return res.send({message: 'Reservation created sucessfully', reservation});
     }catch(err){
         console.error(err);
         return res.status(500).send({message: 'Error creating reservation'});
@@ -38,11 +38,23 @@ exports.add = async(req, res)=>{
 
 exports.getReservations = async(req, res)=>{
     try{
-        let reservations = await Reservation.find();
+        let reservations = await Reservation.find().populate('room').populate('service');;
         return res.send({reservations});
     }catch(err){
         console.error(err);
         return res.status(500).send({message: 'Error getting Reservations'});
+    }
+}
+
+exports.getReservationById = async(req, res)=>{
+    try{
+        let reservationId = req.params.id;
+        let reservation = await Reservation.findOne({_id: reservationId}).populate('room').populate('service');
+        if(!reservation) return res.status(404).send({message: 'Arrendamiento not found'});
+        return res.send({reservation});
+    }catch(err){
+        console.error(err);
+        return res.status(500).send({message: 'Error getting arrendamiento'});
     }
 }
 
@@ -59,7 +71,7 @@ exports.update = async(req, res)=>{
         }
         //obtener reserva actual
         let reservaActual = await Reservation.findOne({_id: reservationId})
-        //actualizar bodega anterior
+        //actualizar reserva anterior
         let roomAnteior = await Room.findOne({_id: reservaActual.room})
         roomAnteior.available = 'DISPONIBLE'
         await roomAnteior.save()
@@ -70,7 +82,7 @@ exports.update = async(req, res)=>{
             {new: true}
         )
         //actualizar habitacion nueva
-        roomExist.status = 'NOAVAILABLE'
+        roomExist.available = 'NO DISPONIBLE'
         await roomExist.save();
         if(!updatedReservation) return res.status(404).send({message: 'Reserva not found and not updated'});
         return res.send({message: 'Reserva updated', updatedReservation});
