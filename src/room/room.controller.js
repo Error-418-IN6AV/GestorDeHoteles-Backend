@@ -18,7 +18,7 @@ exports.add = async(req, res)=>{
                 'Room already created'})
         }
 
-        data.hotel = await Hotel.findOne({user: req.user.sub})
+        data.hotel = await Hotel.findOne({adminHotel: req.user.sub})
 
 
         let room = new Room(data);
@@ -32,7 +32,7 @@ exports.add = async(req, res)=>{
 
 exports.get = async(req, res)=>{
     try{
-        let user = await Hotel.findOne({user: req.user.sub}) 
+        let user = await Hotel.findOne({adminHotel: req.user.sub}) 
 
         let rooms = await Room.find({hotel:user})
         return res.send({message: 'Rooms found', rooms})
@@ -44,7 +44,7 @@ exports.get = async(req, res)=>{
 
 exports.getRoom = async(req, res)=>{
     try{   
-        let user = await Hotel.findOne({user: req.user.sub})    
+        let user = await Hotel.findOne({adminHotel: req.user.sub})    
         let roomId = req.params.id;
         let room = await Room.findOne({_id: roomId , hotel:user})
         if(!room) return res.status(404).send({message: 'Room not found'});
@@ -61,7 +61,7 @@ exports.getRoom = async(req, res)=>{
 exports.update = async(req, res)=>{
     try{
 
-        let user = await Hotel.findOne({user: req.user.sub}) 
+        let user = await Hotel.findOne({adminHotel: req.user.sub}) 
         let roomId = req.params.id;
         let data = req.body;
 
@@ -86,7 +86,7 @@ exports.update = async(req, res)=>{
 exports.delete = async(req, res)=>{
     try{
         let idRoom = req.params.id;
-        let user = await Hotel.findOne({user: req.user.sub}) 
+        let user = await Hotel.findOne({adminHotel: req.user.sub}) 
         let deletedRoom= await Room.findOneAndDelete({_id: idRoom, hotel:user});
         if(!deletedRoom) return res.status(404).send({message: 'Error removing  Room or already deleted'});
         return res.send({message: 'Room deleted sucessfully', deletedRoom});

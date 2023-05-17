@@ -2,7 +2,7 @@
 
 const express = require('express');
 const api = express.Router();
-const { ensureAuth, isManager } = require('../services/authenticated');
+const { ensureAuth, isManager} = require('../services/authenticated');
 const serviceController = require('./sevice.controller');
 
  api.post('/add', [ensureAuth, isManager ],serviceController.add);
