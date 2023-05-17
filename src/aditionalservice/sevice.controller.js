@@ -34,7 +34,7 @@ exports.get = async(req, res)=>{
     }
 }
 
-exports.geService = async(req, res)=>{
+exports.getService = async(req, res)=>{
     try{
         let serviceId = req.params.id;
         let service = await Service.findOne({_id: serviceId})
@@ -77,9 +77,9 @@ exports.update = async(req, res)=>{
 exports.delete = async(req, res)=>{
     try{
         let idService = req.params.id;
-        let deletedService = await Service.deleteOne({_id: idService});
+        let deletedService = await Service.findOneAndDelete({_id: idService});
         if(!deletedService) return res.status(404).send({message: 'Error removing Service or already deleted'});
-        return res.send({message: 'Serivice deleted sucessfully'});
+        return res.send({message: 'Serivice deleted sucessfully',deletedService});
     }catch(err){
         console.error(err)
         return res.status(500).send({message: 'Error Serivice room'})

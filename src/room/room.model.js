@@ -4,20 +4,19 @@ const mongoose = require('mongoose');
 
 const roomSchema = mongoose.Schema({
     name:{
-       type: String,
+        type: String,
         required: true
     },
 
 
     description: {
         type: String,
-        required: true
+        required: false
     },
     hotel: {
-        type: String,
-    /*     type: mongoose.Schema.Types.ObjectId,
-        ref: 'Hotel', */
-        required: false
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hotel',
+        required: true
     },
     available:{
         type:String,
@@ -25,8 +24,12 @@ const roomSchema = mongoose.Schema({
 
     },
     date:{
-        type:Date,
-        require: true
+        type:String,
+        require: false
+    },value:{
+
+        type:Number,
+        require:false,
     }
 
 },
