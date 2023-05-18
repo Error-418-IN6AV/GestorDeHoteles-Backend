@@ -2,3 +2,4 @@ node_modules
 src/room
 src/hotel
 src/aditionalservice
+src/user

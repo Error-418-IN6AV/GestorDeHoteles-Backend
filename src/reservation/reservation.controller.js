@@ -9,7 +9,7 @@ exports.add = async(req, res)=>{
         //Capturar la data
         let data = req.body;
         //Capturar el id de la person logeada
-        //data.user = req.user.sub
+        data.user = req.user.sub
         //Verificar que existe la habitacion
         let roomExist = await Room.findOne({_id: data.room})
         if(!roomExist) return res.send({message: 'La habitacion no existe'})
@@ -19,7 +19,7 @@ exports.add = async(req, res)=>{
             $and: [
                 //{ room: data.room },
                 { date: data.date },
-                //{ user: req.user.sub }
+                { user: req.user.sub }
             ]
         });
         if (reservationExist) return res.status(400).send({ message: 'You already have a reservation on this date.' });
@@ -48,8 +48,8 @@ exports.getReservations = async(req, res)=>{
 
 exports.getReservationById = async(req, res)=>{
     try{
-        let reservationId = req.params.id;
-        let reservation = await Reservation.findOne({_id: reservationId}).populate('room').populate('service');
+        let reservationId = req.params._id;
+        let reservation = await Reservation.findOne({id: reservationId}).populate('room').populate('service');
         if(!reservation) return res.status(404).send({message: 'Arrendamiento not found'});
         return res.send({reservation});
     }catch(err){
@@ -95,8 +95,8 @@ exports.update = async(req, res)=>{
 exports.delete = async(req, res)=>{
     try{
         //obtener el id de la reserva a eliminar
-        let reservationId = req.params.id;
-        let deletedReservation = await Reservation.findOneAndDelete({_id: reservationId});
+        let reservationId = req.params._id;
+        let deletedReservation = await Reservation.findOneAndDelete({id: reservationId});
         if(!deletedReservation) return res.status(404).send({message: 'Error removing reservation or already deleted'});
         // Obtener la habitacion correspondiente a la reserva eliminada
         let room = await Room.findById(deletedReservation.room);
